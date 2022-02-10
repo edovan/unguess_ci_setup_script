@@ -1,0 +1,30 @@
+{
+    "family": "E2E_Tests_OpenMind-Diesel", 
+    "executionRoleArn": "arn:aws:iam::163482350712:role/ECS-Console-V2-TaskDefinition-ECSTaskExecutionRole-14OFGD8HMVOIV",
+    "networkMode": "awsvpc", 
+    "containerDefinitions": [
+        {
+            "name": "openmind-e2e-task", 
+            "image": "163482350712.dkr.ecr.eu-west-1.amazonaws.com/openmind-diesel-rbfw-testing-machine:latest", 
+            "essential": true, 
+            "entryPoint": [
+                "robot",
+                "-L",
+                "trace",
+                "-v",
+                "headless:False",
+                "-d",
+                "./results",
+                "cases"
+            ], 
+            "command": [
+                "robot -L trace -v headless:False -d ./results case"
+            ]
+        }
+    ], 
+    "requiresCompatibilities": [
+        "FARGATE"
+    ], 
+    "cpu": "256", 
+    "memory": "512"
+}
