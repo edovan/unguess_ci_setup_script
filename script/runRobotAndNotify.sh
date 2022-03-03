@@ -8,6 +8,7 @@ _AWS_REGION=$(tr '[:upper:]' '[:lower:]'  <<<  $AWS_REGION)
 _AWS_REGION=$(tr '[:upper:]' '[:lower:]'  <<<  $AWS_REGION)
 
 ## Slack channel: QA_SQUAD_NOTIFICATION
+_SLACK_WEB_HOOK=https://hooks.slack.com/services/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
 _SLACK_WEB_HOOK=$SLACK_WEB_HOOK
 
 ## Folder and path
@@ -32,8 +33,8 @@ URL_DASHBOARD=https://$BUCKET.s3.$REGION.amazonaws.com/$WEB_ALLURE_FOLDER
 # <======   GENERAL PARAM SETUP  =======> #
 ENV_RUN=_default_
 BROWSER_RUN=Chrome
-CUSTOMER_NAME=_default_
-PRODUCT_NAME=_default_
+CUSTOMER_NAME=$_CUSTOMER_NAME
+PRODUCT_NAME=$_PRODUCT_NAME
 # <====================================> #
 
 # switch to right directory If running in Docker 
@@ -53,12 +54,12 @@ robot --version
 # rfbrowser init 
 
 # notify test starting 
-MSG="{\"text\":\":robot_face: [_ *${ENV_RUN^^}* _][_ $PRODUCT_NAME _] Starting tests execution :rocket: \"}"
-curl -X POST -H 'Content-type: application/json' --data "$MSG" $SLACK_WEB_HOOK
+MSG="{\"text\":\":robot_face: [_ *$ENV_RUN* _][_ $PRODUCT_NAME _] Starting tests execution :rocket: \"}"
+curl -X POST -H 'Content-type: application/json' --data "$MSG" $_SLACK_WEB_HOOK
 # run test
 robot -L trace -v headless:True \
       -d ./results  \
-      --listener "RobotNotifications;$SLACK_WEB_HOOK;summary"  \
+      --listener "RobotNotifications;$_SLACK_WEB_HOOK;summary"  \
       --listener "allure_robotframework;$ALLURE_RESULTS" \
       -v ENV:$ENV_RUN \
       "$@"
@@ -86,8 +87,8 @@ aws s3 sync ./$ALLURE_REPORT s3://$BUCKET/$WEB_ALLURE_FOLDER/$PRODUCT_NAME/
 
 
 # Send Notification
-MSG="{\"text\":\":robot_face: [_ *${ENV_RUN^^}* _][_ $PRODUCT_NAME _] *Report*: <$URL_REPORT/$PRODUCT_NAME/report.html|here>\"}"
-curl -X POST -H 'Content-type: application/json' --data "$MSG" $SLACK_WEB_HOOK
-MSG="{\"text\":\":robot_face: [_ *${ENV_RUN^^}* _][_ $PRODUCT_NAME _]*Dashboard*: <$URL_DASHBOARD/$PRODUCT_NAME/index.html|here>\"}"
-curl -X POST -H 'Content-type: application/json' --data "$MSG" $SLACK_WEB_HOOK
+MSG="{\"text\":\":robot_face: [_ *$ENV_RUN* _][_ $PRODUCT_NAME _] *Report*: <$URL_REPORT/$PRODUCT_NAME/report.html|here>\"}"
+curl -X POST -H 'Content-type: application/json' --data "$MSG" $_SLACK_WEB_HOOK
+MSG="{\"text\":\":robot_face: [_ *$ENV_RUN* _][_ $PRODUCT_NAME _]*Dashboard*: <$URL_DASHBOARD/$PRODUCT_NAME/index.html|here>\"}"
+curl -X POST -H 'Content-type: application/json' --data "$MSG" $_SLACK_WEB_HOOK
 
