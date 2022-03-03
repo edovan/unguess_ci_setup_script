@@ -65,13 +65,13 @@ robot -L trace -v headless:True \
       "$@"
 
 # Upload results 
-
+echo ===> Upload Results <===
 ## cleaning latest report
 aws s3 rm --recursive s3://$BUCKET/$WEB_REPORT_FOLDER/$PRODUCT_NAME/
 ## upload on latest 
 aws s3 sync ./results s3://$BUCKET/$WEB_REPORT_FOLDER/$PRODUCT_NAME/
 ## upload on current timestamp folder
-aws s3 cp s3://$BUCKET/$WEB_REPORT_FOLDER/$PRODUCT_NAME/ s3://$BUCKET/$PRODUCT_NAME/$CURRENT_REPORT_FOLDER/ 
+aws s3 cp s3://$BUCKET/$WEB_REPORT_FOLDER/$PRODUCT_NAME/ s3://$BUCKET/$PRODUCT_NAME/$CURRENT_REPORT_FOLDER/ --recursive
 ## retrieve execution history 
 aws s3 sync s3://$BUCKET/$WEB_ALLURE_FOLDER/$PRODUCT_NAME/history  ./$ALLURE_RESULTS/history
 ## set report variables
