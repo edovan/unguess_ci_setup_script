@@ -1,25 +1,28 @@
 {
-    "family": "E2E_Tests_OpenMind-Diesel", 
-    "executionRoleArn": "arn:aws:iam::163482350712:role/ECS-Console-V2-TaskDefinition-ECSTaskExecutionRole-14OFGD8HMVOIV",
+    "family": "{{ECR_FAAMILY}}", 
+    "executionRoleArn": "arn:aws:iam::005876332748:role/e2e_test_runner",
     "networkMode": "awsvpc", 
     "containerDefinitions": [
         {
-            "name": "openmind-e2e-task", 
-            "image": "163482350712.dkr.ecr.eu-west-1.amazonaws.com/openmind-diesel-rbfw-testing-machine:latest", 
+            "name": "e2e_{{CUSTOMER_NAME}}_{{PRODUCT_NAME}}_task", 
+            "image": "005876332748.dkr.ecr.eu-central-1.amazonaws.com/e2e_{{CUSTOMER_NAME}}_{{PRODUCT_NAME}}:latest", 
             "essential": true, 
             "entryPoint": [
-                "robot",
-                "-L",
-                "trace",
-                "-v",
-                "headless:False",
-                "-d",
-                "./results",
-                "cases"
+                "/bin/sh"
             ], 
             "command": [
-                "robot -L trace -v headless:False -d ./results case"
-            ]
+                "/robot/runRobotAndNotify.sh",
+                "cases"
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "secretOptions": null,
+                "options": {
+                  "awslogs-group": "/ecs/e2e_{{CUSTOMER_NAME}}_{{PRODUCT_NAME}}",
+                  "awslogs-region": "eu-central-1",
+                  "awslogs-stream-prefix": "ecs"
+                }
+            }
         }
     ], 
     "requiresCompatibilities": [
